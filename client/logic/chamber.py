@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta, timezone
-import logging
 import threading
 import time
 from typing import Any
-from .utils import MockArduinoController
+from .utils import MockArduinoController, get_logger
 
 
 class Database:
@@ -15,8 +14,9 @@ class Database:
 
 
 class ChamberConfig:
-    def __init__(self):
+    def __init__(self, name: str):
         self.lock = threading.RLock()
+        self.name = name
         self.watering: dict[str, Any] = {
             "next_run_at": datetime.now(timezone.utc),
             "interval": 180,
@@ -38,7 +38,9 @@ class ChamberConfig:
 class Chamber:
     def __init__(self, config: ChamberConfig):
         self.config: ChamberConfig = config
-        self.logger: logging.Logger = logging.getLogger("Chamber")
+        self.logger = get_logger(self.config.name)
+
+        # self.logger: logging.Logger = LoggerAdapter(self.config.name, logger)
         self.arduino = MockArduinoController("COM9", 9600, timeout=3.0)
 
     def get_data(self):
@@ -65,17 +67,24 @@ class Chamber:
                 seconds=self.config.watering["interval"]
             )
             self.config.save()
-        # Function to calculate the water quantity
+        # Function to calculate the water time
         watering_time: float = round(water_quantity / 30.55, 2)
         self.logger.info(f"Watering with quantity: {water_quantity} ml")
         self.arduino.command(f"P {watering_time}".encode("utf-8"))
 
+
+class ChamberManager:
+    def __init__(self, chambers: dict[str, Chamber]):
+        self.chambers = chambers
+
     def scheduler_loop(self):
         while True:
-            with self.config.lock:
-                due: bool = (
-                    datetime.now(timezone.utc) >= self.config.watering["next_run_at"]
-                )
-            if due:
-                self.water_plants()
+            for chamber in self.chambers.values():
+                with chamber.config.lock:
+                    due: bool = (
+                        datetime.now(timezone.utc)
+                        >= chamber.config.watering["next_run_at"]
+                    )
+                if due:
+                    chamber.water_plants()
             time.sleep(0.5)

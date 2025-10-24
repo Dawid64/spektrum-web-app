@@ -2,12 +2,12 @@ from collections.abc import Callable
 import streamlit as st
 from client.logic import get_shared
 from copy import copy
+import logging
 
 
 def callback_generator(chamber: str) -> Callable:
     def callback():
-        print(f"Printing info for {chamber}")
-        config = get_shared()
+        config = get_shared()[chamber]
         with config.lock:
             config.watering["interval"] = st.session_state[
                 f"{chamber}_watering_frequency"
@@ -18,13 +18,24 @@ def callback_generator(chamber: str) -> Callable:
             config.camera_frequency = st.session_state[f"{chamber}_camera_frequency"]
             config.light_time = st.session_state[f"{chamber}_light_frequency"]
             config.sensor_delay = st.session_state[f"{chamber}_sensors_delay"]
+        logging.info(
+            f"""[{chamber}]: Parameters has been changed to:\n Watering frequency: {
+                st.session_state[f"{chamber}_watering_frequency"]
+            }\n Watering quantity: {
+                st.session_state[f"{chamber}_watering_quantity"]
+            }\n Camera frequency: {
+                st.session_state[f"{chamber}_camera_frequency"]
+            }\n Light time: {
+                st.session_state[f"{chamber}_light_frequency"]
+            }\n Sensor delay: {st.session_state[f"{chamber}_sensors_delay"]}"""
+        )
 
     return callback
 
 
 def config_form(chamber: str):
     with st.form(f"{chamber}-settings"):
-        current_config = get_shared()
+        current_config = get_shared()[chamber]
         with current_config.lock:
             config = copy(current_config)
         cols = st.columns([1, 1])
