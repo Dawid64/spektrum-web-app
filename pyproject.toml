@@ -1,0 +1,10 @@
+[project]
+name = "spektrum-web-app"
+version = "0.1.0"
+description = "Web application for plant chamber monitoring and control."
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [{ name = "Dawid Siera" }]
+dependencies = [
+    "streamlit>=1.50.0",
+]
