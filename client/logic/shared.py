@@ -4,6 +4,7 @@ import os
 import streamlit as st
 from .chamber import ChamberManager, Chamber, ChamberConfig
 
+CHAMBER_NAMES = ["Chamber-1", "Chamber-2"]
 STATE_FILE = os.environ.get("STATE_FILE", "state.json")
 
 
@@ -15,9 +16,8 @@ def run_chamber_manager(configs: dict[str, ChamberConfig]):
 
 @st.cache_resource
 def get_shared() -> dict[str, ChamberConfig]:
-    chamber_names = ["Chamber-1", "Chamber-2"]
     configs: dict[str, ChamberConfig] = {
-        name: ChamberConfig.load(name) for name in chamber_names
+        name: ChamberConfig.load(name) for name in CHAMBER_NAMES
     }
     if not hasattr(get_shared, "_started"):
         thread: threading.Thread = threading.Thread(

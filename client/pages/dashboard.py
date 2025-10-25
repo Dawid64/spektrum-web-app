@@ -1,8 +1,8 @@
 import streamlit as st
-from client.components.time_series_plot import time_series
+from client import components
 
 st.set_page_config(layout="wide")
 st.title("Dashboard")
 
 # TODO: Create dashboard
-time_series()
+components.time_series()

@@ -1,7 +1,7 @@
 import streamlit as st
-from client.logic.database import SESSION, Measurements
 import pandas as pd
 import altair as alt
+from client.logic import SESSION, Measurements
 
 
 def time_series():

@@ -1,8 +1,8 @@
 from collections.abc import Callable
-import streamlit as st
-from client.logic import get_shared
 from copy import copy
+import streamlit as st
 from client.utils import get_logger
+from client.logic import get_shared
 
 
 def callback_generator(chamber: str) -> Callable:
