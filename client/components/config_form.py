@@ -2,7 +2,7 @@ from collections.abc import Callable
 import streamlit as st
 from client.logic import get_shared
 from copy import copy
-from client.logic.utils import get_logger
+from client.utils import get_logger
 
 
 def callback_generator(chamber: str) -> Callable:

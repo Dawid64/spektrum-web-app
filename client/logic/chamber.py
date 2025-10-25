@@ -2,7 +2,8 @@ from datetime import datetime, timedelta, timezone
 import threading
 import time
 from typing import Any, Literal
-from .utils import MockArduinoController, get_logger
+from client.utils import get_logger
+from .utils import MockArduinoController
 from .database import ConfigParameters, SESSION
 
 
