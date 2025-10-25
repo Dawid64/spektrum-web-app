@@ -18,6 +18,7 @@ pages = [
     st.Page(os.path.join("client", "pages", "settings.py"), title="Settings", icon="⚙️"),
     st.Page(os.path.join("client", "pages", "labelling.py"), title="Labelling"),
     st.Page(os.path.join("client", "pages", "admin_panel.py"), title="Admin panel"),
+    st.Page(os.path.join("client", "pages", "info.py"), title="Info"),
 ]
 
 pg = st.navigation(pages, position="top")

@@ -17,7 +17,6 @@ def rect_to_txt(rect: dict[str, float]) -> str:
 
 
 class CustomImageManager(ImageManager):
-    # TODO Fix: labels not
     def __init__(self, filename):
         """initiate module"""
         self._filename = filename

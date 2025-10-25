@@ -4,5 +4,5 @@ from client import components
 st.set_page_config(layout="wide")
 st.title("Dashboard")
 
-# TODO: Create dashboard
+# TODO: Improve (redesign) dashboard
 components.time_series()
