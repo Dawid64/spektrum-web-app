@@ -20,7 +20,6 @@ def time_series():
             Measurements.chamber_name.in_(chamber_names)
         )
         df = pd.read_sql(query.statement, query.session.bind)
-    print(df)
     # st.dataframe(df, hide_index=True)
 
     df_long = df.melt(
