@@ -24,7 +24,7 @@ def time_series():
 
     df_long = df.melt(
         id_vars=["date", "chamber_name"],
-        value_vars=parameters,  # from your multiselect
+        value_vars=parameters,
         var_name="parameter",
         value_name="value",
     )

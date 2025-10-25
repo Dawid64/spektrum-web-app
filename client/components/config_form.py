@@ -80,4 +80,6 @@ def config_form(chamber: str):
                 placeholder="Type a number...",
                 key=f"{chamber}_sensors_delay",
             )
-        st.form_submit_button("Save", on_click=callback_generator(chamber))
+        submitted = st.form_submit_button("Save", on_click=callback_generator(chamber))
+        if submitted:
+            st.success("Settings saved successfully!", icon="✅")

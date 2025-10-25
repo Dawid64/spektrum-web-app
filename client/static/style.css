@@ -1,0 +1,388 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=VT323&display=swap');
+
+:root {
+  --vapor-cyan: #00fff7;
+  --vapor-magenta: #ff2df5;
+  --vapor-purple: #7a5cff;
+  --vapor-bg: #0b0f1a;
+  --vapor-panel: #12172a;
+  --vapor-text: #e6f7ff;
+}
+
+html,
+body,
+[data-testid="stAppViewContainer"] {
+  background: radial-gradient(1200px 800px at 20% -10%, rgba(122, 92, 255, 0.12), transparent 55%),
+    radial-gradient(1000px 700px at 100% 0%, rgba(0, 255, 247, 0.08), transparent 50%),
+    var(--vapor-bg) !important;
+  color: var(--vapor-text);
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px rgba(0, 255, 247, 0.35), 0 0 24px rgba(122, 92, 255, 0.25);
+}
+
+.block-container {
+  padding-top: 2rem;
+}
+
+[data-testid="stSidebar"] {
+  background: linear-gradient(180deg, rgba(122, 92, 255, 0.10) 0%, rgba(0, 0, 0, 0) 40%), var(--vapor-panel) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(4px);
+}
+
+.stMarkdown,
+.stText,
+.stRadio,
+.stSelectbox,
+.stMultiSelect,
+.stNumberInput,
+.stSlider {
+  color: var(--vapor-text);
+}
+
+
+.stButton>button {
+  border-radius: 999px !important;
+  border: 1px solid var(--vapor-cyan) !important;
+  background: linear-gradient(90deg, rgba(0, 255, 247, 0.12), rgba(255, 45, 245, 0.12)) !important;
+  color: var(--vapor-text) !important;
+  text-shadow: 0 0 8px rgba(0, 255, 247, 0.35);
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.stButton>button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(0, 255, 247, 0.35), 0 0 30px rgba(122, 92, 255, 0.25);
+  border-color: var(--vapor-magenta) !important;
+}
+
+[data-testid="stSlider"] .stSlider {
+  --track-color: rgba(0, 255, 247, 0.4);
+}
+
+[data-testid="stTickBar"]>div:nth-child(odd) {
+  background: linear-gradient(90deg, var(--vapor-cyan), var(--vapor-purple));
+  height: 4px;
+  border-radius: 999px;
+}
+
+[data-testid="stMetricValue"] {
+  font-family: 'VT323', monospace;
+  font-size: 2.6rem !important;
+  color: var(--vapor-cyan) !important;
+  text-shadow: 0 0 12px rgba(0, 255, 247, 0.35);
+}
+
+[data-testid="stTable"] table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+[data-testid="stTable"] thead th {
+  background: rgba(122, 92, 255, 0.15) !important;
+}
+
+[data-testid="stTable"] tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+pre,
+code,
+.stCodeBlock {
+  background: #0d1022 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  text-shadow: none !important;
+}
+
+/* --- TOP NAVBAR / TOOLBAR OVERRIDES --- */
+[data-testid="stToolbar"] {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.6), rgba(20, 20, 40, 0.6)) !important;
+  backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 20px rgba(0, 255, 247, 0.08);
+}
+
+[data-testid="stToolbar"] button,
+[data-testid="stToolbar"] svg {
+  color: #00fff7 !important;
+  opacity: 0.85;
+}
+
+[data-testid="stToolbar"] button:hover,
+[data-testid="stToolbar"] svg:hover {
+  color: #ff2df5 !important;
+  opacity: 1;
+}
+
+.hide-toolbar [data-testid="stToolbar"] {
+  visibility: hidden;
+  height: 0;
+}
+
+
+header[data-testid="stHeader"] {
+  background: transparent !important;
+  color: var(--vapor-text) !important;
+  height: 0 !important;
+  padding: 0 !important;
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  border: none !important;
+}
+
+.stTextInput>div>div>input,
+.stNumberInput input,
+.stTextArea textarea {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: var(--vapor-text);
+  border-radius: 10px;
+}
+
+div[data-baseweb="select"]>div {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 12px;
+  color: var(--vapor-text);
+  min-height: 44px;
+}
+
+div[data-baseweb="popover"] {
+  backdrop-filter: blur(6px);
+}
+
+ul[role="listbox"] {
+  background: #12172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+li[role="option"] {
+  color: var(--vapor-text);
+}
+
+li[role="option"][aria-selected="true"],
+li[role="option"]:hover {
+  background: linear-gradient(90deg, rgba(0, 255, 247, 0.12), rgba(122, 92, 255, 0.12));
+}
+
+[data-baseweb="tag"] {
+  background: linear-gradient(90deg, rgba(0, 255, 247, 0.18), rgba(255, 45, 245, 0.18));
+  color: var(--vapor-text);
+  border: 1px solid rgba(0, 255, 247, 0.30);
+  text-shadow: 0 0 8px rgba(0, 255, 247, 0.35);
+}
+
+[data-baseweb="radio"] label,
+[data-baseweb="checkbox"] label {
+  color: var(--vapor-text);
+}
+
+[data-baseweb="radio"] div[role="radio"],
+[data-baseweb="checkbox"] input+div {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-baseweb="radio"] div[aria-checked="true"],
+[data-baseweb="checkbox"] input:checked+div {
+  box-shadow: 0 0 10px rgba(0, 255, 247, 0.35);
+  border-color: var(--vapor-cyan);
+}
+
+.stDateInput input {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--vapor-text) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 10px !important;
+}
+
+[data-baseweb="slider"] div[role="slider"] {
+  box-shadow: 0 0 12px rgba(0, 255, 247, 0.35);
+  background: linear-gradient(90deg, var(--vapor-cyan), var(--vapor-magenta));
+}
+
+[data-baseweb="slider"] div[role="slider"]::before {
+  border: 2px solid var(--vapor-bg);
+}
+
+[data-testid="stFileUploader"] section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+}
+
+[data-testid="stFileUploader"] section:hover {
+  border-color: var(--vapor-cyan);
+  box-shadow: 0 0 16px rgba(0, 255, 247, 0.18);
+}
+
+[data-testid="stFileUploader"] [data-testid="stMarkdownContainer"] {
+  color: var(--vapor-text);
+}
+
+.stDownloadButton>button {
+  border-radius: 999px !important;
+  border: 1px solid var(--vapor-purple) !important;
+  background: linear-gradient(90deg, rgba(122, 92, 255, 0.16), rgba(255, 45, 245, 0.12)) !important;
+  color: var(--vapor-text) !important;
+  text-shadow: 0 0 8px rgba(122, 92, 255, 0.35);
+}
+
+.stDownloadButton>button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(122, 92, 255, 0.35), 0 0 30px rgba(0, 255, 247, 0.25);
+  border-color: var(--vapor-cyan) !important;
+}
+
+[data-testid="stExpander"] {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+[data-testid="stExpander"] summary {
+  color: var(--vapor-text);
+  text-shadow: 0 0 10px rgba(0, 255, 247, 0.25);
+}
+
+[data-testid="stExpander"] summary:hover {
+  color: var(--vapor-cyan);
+}
+
+[data-baseweb="tabs"] {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-baseweb="tab-list"] [role="tab"] {
+  color: rgba(230, 247, 255, 0.75);
+}
+
+[data-baseweb="tab-list"] [aria-selected="true"] {
+  color: var(--vapor-text);
+  text-shadow: 0 0 12px rgba(0, 255, 247, 0.30);
+}
+
+[data-baseweb="tab-highlight"] {
+  background: linear-gradient(90deg, var(--vapor-cyan), var(--vapor-magenta)) !important;
+}
+
+[data-testid="stDataFrame"] {
+  background: transparent !important;
+}
+
+[data-testid="stDataFrame"] .row-widget.stButton {
+  filter: drop-shadow(0 0 6px rgba(0, 255, 247, 0.35));
+}
+
+[data-testid="stDataFrame"] .sticky table {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+[data-testid="stDataFrame"] thead th {
+  background: rgba(122, 92, 255, 0.15) !important;
+  color: var(--vapor-text) !important;
+}
+
+[data-testid="stDataFrame"] tbody tr:hover td {
+  background: rgba(0, 255, 247, 0.06) !important;
+}
+
+[data-testid="stElementToolbar"] svg {
+  color: var(--vapor-cyan);
+}
+
+[data-testid="stElementToolbar"] svg:hover {
+  color: var(--vapor-magenta);
+}
+
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h1,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] label {
+  color: var(--vapor-text);
+  text-shadow: 0 0 10px rgba(0, 255, 247, 0.25);
+}
+
+[data-baseweb="toaster"] {
+  color: var(--vapor-text);
+}
+
+[data-baseweb="toaster"] div[role="status"] {
+  background: #12172a;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 0 18px rgba(0, 255, 247, 0.10);
+}
+
+.stForm [data-testid="baseButton-secondary"],
+.stForm [data-testid="baseButton-primary"] {
+  border-radius: 999px;
+}
+
+[data-baseweb="input"] {
+  background-color: transparent !important;
+}
+
+[data-baseweb="base-input"] {
+  background-color: transparent !important;
+}
+
+[data-testid="stNumberInputContainer"] {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 12px;
+  padding: 4px 8px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+[data-testid="stNumberInputContainer"]:focus-within {
+  border-color: var(--vapor-cyan);
+  box-shadow: 0 0 12px rgba(0, 255, 247, 0.25);
+}
+
+/* Input field inside */
+[data-testid="stNumberInputContainer"] input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--vapor-text);
+  font-size: 1rem;
+  padding: 8px 10px;
+  outline: none;
+}
+
+/* Stepper buttons ( + / - ) */
+[data-testid="stNumberInputContainer"] button {
+  border: none;
+  background: linear-gradient(90deg, rgba(0, 255, 247, 0.12), rgba(255, 45, 245, 0.12));
+  color: var(--vapor-text);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+[data-testid="stNumberInputContainer"] button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 14px rgba(0, 255, 247, 0.35), 0 0 24px rgba(122, 92, 255, 0.25);
+}
