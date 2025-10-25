@@ -27,13 +27,10 @@ event = st.dataframe(
 )
 
 
-def set_admin():
-    print(data.iloc(event.selection.rows))
-    data.iloc(event.selection.rows)["Rola"] = "Admin"
+def set_admin(): ...
 
 
-def set_user():
-    pass
+def set_user(): ...
 
 
 col1, col2 = st.columns([1, 1])

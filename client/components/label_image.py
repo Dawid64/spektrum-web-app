@@ -10,9 +10,11 @@ from PIL import Image
 LABELS = ["plant", "not a plant", "tree", "beer"]  # TODO: Set labels
 
 
-def rect_to_txt(rect: dict[str, float]) -> str:
+def rect_to_txt(rect: dict[str, float | str]) -> str:
     x_center = rect["left"]
     y_center = rect["top"]
+    if rect["label"] not in LABELS:
+        raise ValueError(f"{rect['label']=} not in {LABELS=}")
     return f"{LABELS.index(rect['label'])} {x_center} {y_center} {rect['width']} {rect['height']}\n"
 
 
@@ -74,7 +76,7 @@ class Labeller:
         self.image_index += 1
         self.image_index %= self.num_images
 
-    def get_image(self) -> tuple[list, list, CustomImageManager]:
+    def get_image(self) -> tuple[Image.Image, list, CustomImageManager]:
         img_file_name = self.dir_manager.get_image(self.image_index)
         img_path = os.path.join(self.dir_path, "images", img_file_name)
         manager = CustomImageManager(img_path)

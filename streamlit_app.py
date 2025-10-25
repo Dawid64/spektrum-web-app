@@ -5,7 +5,7 @@ import streamlit as st
 
 from client.logic import get_shared
 
-logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 get_shared()  # Required to initialize chamber object
 

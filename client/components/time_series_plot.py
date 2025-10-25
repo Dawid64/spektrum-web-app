@@ -19,8 +19,7 @@ def time_series():
         query = session.query(Measurements).filter(
             Measurements.chamber_name.in_(chamber_names)
         )
-        df = pd.read_sql(query.statement, query.session.bind)
-    # st.dataframe(df, hide_index=True)
+        df = pd.read_sql(query.statement, query.session.bind)  # type: ignore
 
     df_long = df.melt(
         id_vars=["date", "chamber_name"],
