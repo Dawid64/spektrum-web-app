@@ -75,7 +75,9 @@ class CustomFormatter(logging.Formatter):
 
 def get_logger(name: str) -> logging.Logger:
     logger = logging.getLogger(name)
-    ch = logging.StreamHandler()
-    ch.setFormatter(CustomFormatter())
-    logger.addHandler(ch)
+    if not logger.handlers:
+        ch = logging.StreamHandler()
+        ch.setFormatter(CustomFormatter())
+        logger.addHandler(ch)
+    logger.propagate = False
     return logger

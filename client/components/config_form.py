@@ -2,12 +2,14 @@ from collections.abc import Callable
 import streamlit as st
 from client.logic import get_shared
 from copy import copy
-import logging
+from client.logic.utils import get_logger
 
 
 def callback_generator(chamber: str) -> Callable:
+    logger = get_logger(chamber)
+    config = get_shared()[chamber]
+
     def callback():
-        config = get_shared()[chamber]
         with config.lock:
             config.watering["interval"] = st.session_state[
                 f"{chamber}_watering_frequency"
@@ -18,8 +20,9 @@ def callback_generator(chamber: str) -> Callable:
             config.camera_frequency = st.session_state[f"{chamber}_camera_frequency"]
             config.light_time = st.session_state[f"{chamber}_light_frequency"]
             config.sensor_delay = st.session_state[f"{chamber}_sensors_delay"]
-        logging.info(
-            f"""[{chamber}]: Parameters has been changed to:\n Watering frequency: {
+            config.save()
+        logger.info(
+            f"""Parameters has been changed to:\n Watering frequency: {
                 st.session_state[f"{chamber}_watering_frequency"]
             }\n Watering quantity: {
                 st.session_state[f"{chamber}_watering_quantity"]

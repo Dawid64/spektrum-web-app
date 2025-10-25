@@ -1,46 +1,86 @@
 from datetime import datetime, timedelta, timezone
 import threading
 import time
-from typing import Any
+from typing import Any, Literal
 from .utils import MockArduinoController, get_logger
-
-
-class Database:
-    def __init__(self):
-        pass
-
-    def add_photo(self, photo):
-        pass
+from .database import ConfigParameters, SESSION
 
 
 class ChamberConfig:
-    def __init__(self, name: str):
+    def __init__(
+        self,
+        name: str,
+        watering: dict[Literal["interval", "quantity", "next_run_at"], Any],
+        camera_frequency: int,
+        light_time: int,
+        sensor_delay: int,
+    ):
         self.lock = threading.RLock()
         self.name = name
-        self.watering: dict[str, Any] = {
-            "next_run_at": datetime.now(timezone.utc),
-            "interval": 180,
-            "quantity": 10,
-        }
-        self.camera_frequency = 8
-        self.light_time = 6
-        self.sensor_delay = 15
+        self.watering = watering
+        self.camera_frequency = camera_frequency
+        self.light_time = light_time
+        self.sensor_delay = sensor_delay
 
-    def load(self):
-        # TODO: Loading
-        print("Loading")
+    @classmethod
+    def load(cls, name: str) -> "ChamberConfig":
+        logger = get_logger(f"Config-{name}")
+        with SESSION() as session:
+            config: ConfigParameters | None = (
+                session.query(ConfigParameters)
+                .where(ConfigParameters.chamber_name == name)
+                .order_by(ConfigParameters.date.desc())
+                .first()
+            )
+        logger.debug(repr(config))
+        if config is None:
+            config = ConfigParameters(
+                chamber_name=name,
+                date=datetime.now(timezone.utc),
+                watering_interval=100,
+                watering_quantity=100,
+                camera_frequency=10,
+                light_time=10,
+                sensor_delay=10,
+            )
+            logger.debug("Config not found, submitting a new one")
+            with SESSION() as session:
+                session.add(config)
+                session.commit()
+            return cls.load(name)
+        return cls(
+            name=name,
+            watering={
+                "interval": config.watering_interval,
+                "quantity": config.watering_quantity,
+                "next_run_at": datetime.now(timezone.utc),
+            },
+            camera_frequency=config.camera_frequency,
+            light_time=config.light_time,
+            sensor_delay=config.sensor_delay,
+        )
 
     def save(self):
-        # TODO: Saving
-        print("Saving")
+        logger = get_logger(f"Config-{self.name}")
+        config = ConfigParameters(
+            chamber_name=self.name,
+            date=datetime.now(timezone.utc),
+            watering_interval=self.watering["interval"],
+            watering_quantity=self.watering["quantity"],
+            camera_frequency=self.camera_frequency,
+            light_time=self.light_time,
+            sensor_delay=self.sensor_delay,
+        )
+        logger.debug(f"Saving configs\n{repr(config)}")
+        with SESSION() as session:
+            session.add(config)
+            session.commit()
 
 
 class Chamber:
     def __init__(self, config: ChamberConfig):
         self.config: ChamberConfig = config
         self.logger = get_logger(self.config.name)
-
-        # self.logger: logging.Logger = LoggerAdapter(self.config.name, logger)
         self.arduino = MockArduinoController("COM9", 9600, timeout=3.0)
 
     def get_data(self):
@@ -66,7 +106,7 @@ class Chamber:
             self.config.watering["next_run_at"] += timedelta(
                 seconds=self.config.watering["interval"]
             )
-            self.config.save()
+            # self.config.save()
         # Function to calculate the water time
         watering_time: float = round(water_quantity / 30.55, 2)
         self.logger.info(f"Watering with quantity: {water_quantity} ml")

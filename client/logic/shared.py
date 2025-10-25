@@ -16,9 +16,9 @@ def run_chamber_manager(configs: dict[str, ChamberConfig]):
 @st.cache_resource
 def get_shared() -> dict[str, ChamberConfig]:
     chamber_names = ["Chamber-1", "Chamber-2"]
-    configs = {name: ChamberConfig(name) for name in chamber_names}
-    for config in configs.values():
-        config.load()
+    configs: dict[str, ChamberConfig] = {
+        name: ChamberConfig.load(name) for name in chamber_names
+    }
     if not hasattr(get_shared, "_started"):
         thread: threading.Thread = threading.Thread(
             target=run_chamber_manager, args=(configs,), daemon=True

@@ -3,6 +3,7 @@
         "Dawid",
         "hypercorn",
         "jsonify",
+        "sessionmaker",
         "Siera",
         "spektrum",
         "streamlit"
