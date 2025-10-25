@@ -1,10 +1,8 @@
 import streamlit as st
 
-from client.logic.shared import get_shared
 from client import components
 
-config = get_shared()
-
+st.set_page_config(layout="centered")
 st.title("Chamber settings")
 
 

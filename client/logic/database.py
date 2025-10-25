@@ -42,7 +42,7 @@ class Measurements(Base):
     light_intensity: Mapped[float]
 
     def __repr__(self) -> str:
-        return f"<data={self.some_data}>"
+        return f"<{self.date} | {self.chamber_name} | temperature: {self.temperature}, humidity={self.humidity}, light intensity={self.light_intensity}>"
 
 
 Base.metadata.create_all(DB)

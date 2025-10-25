@@ -1,18 +1,18 @@
-import logging
 from typing import Literal
 import serial
-
+from client.utils import get_logger
 
 ARDUINO_COMMAND = Literal["read", "light", "camera", "bump"]
 
 
 class MockArduinoController:
     def __init__(self, port: str, baudrate: int, timeout: float):
+        self.logger = get_logger("Arduino-Mock")
         _ = (port, baudrate, timeout)
-        print("Initiated")
+        self.logger.debug("Arduino mock initiated")
 
     def command(self, command: bytes | ARDUINO_COMMAND) -> None | str:
-        print(f"Running {command}")
+        self.logger.debug(f"Command: {command}")
         return f"result of {command}"
 
 
