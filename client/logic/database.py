@@ -45,4 +45,16 @@ class Measurements(Base):
         return f"<{self.date} | {self.chamber_name} | temperature: {self.temperature}, humidity={self.humidity}, light intensity={self.light_intensity}>"
 
 
+# class User(Base):
+#     __tablename__ = "users"
+#     id: Mapped[int] = mapped_column(primary_key=True, index=True, unique=True)
+#     name: Mapped[str] = mapped_column(index=True)
+
+#     password: Mapped[str]
+#     role: Mapped[Literal["User", "Maintainer", "Admin"]]
+
+#     def __repr__(self) -> str:
+#         return f"<{self.name}: {self.role}>"
+
+
 Base.metadata.create_all(DB)

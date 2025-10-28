@@ -8,6 +8,7 @@
         "sessionmaker",
         "Siera",
         "spektrum",
+        "stauth",
         "streamlit"
     ],
     "cSpell.language": "en,pl"

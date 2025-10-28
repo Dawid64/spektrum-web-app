@@ -3,7 +3,7 @@ import os
 
 import streamlit as st
 
-from client.logic import get_shared
+from client.logic.shared import get_shared
 
 logging.basicConfig(level=logging.DEBUG)
 

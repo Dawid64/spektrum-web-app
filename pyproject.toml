@@ -10,5 +10,6 @@ dependencies = [
     "pyserial>=3.5",
     "sqlalchemy>=2.0.44",
     "streamlit>=1.50.0",
+    "streamlit-authenticator>=0.4.2",
     "streamlit-img-label>=0.1.1",
 ]
