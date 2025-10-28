@@ -1,7 +1,7 @@
 import streamlit as st
 
 from client import components
-from client.utils import after_login
+# from client.components.authorization import after_login
 
 st.set_page_config(layout="centered")
 st.title("Chamber settings")
@@ -16,4 +16,4 @@ def settings():
         components.config_form("Chamber-2")
 
 
-roles = after_login(settings, required_role="maintainer")
+# roles = after_login(settings, required_role="maintainer")

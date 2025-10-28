@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
-from client.utils import after_login
+import importlib
+
+authorization = importlib.import_module("client.components.authorization")
 
 
 st.set_page_config(
@@ -33,4 +35,4 @@ def main():
         st.button("Daj user'a")
 
 
-after_login(main, "admin")
+authorization.after_login(main, "admin")

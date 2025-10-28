@@ -1,7 +1,7 @@
 from __future__ import annotations
 import threading
 import streamlit as st
-from .chamber import ChamberManager, Chamber, ChamberConfig
+from client.logic.chamber import ChamberManager, Chamber, ChamberConfig
 
 CHAMBER_NAMES = ["Chamber-1", "Chamber-2"]
 
@@ -23,5 +23,5 @@ def get_shared() -> dict[str, ChamberConfig]:
         )
         thread.start()
 
-        get_shared._started = True
+        get_shared._started = True  # type: ignore
     return configs
