@@ -3,7 +3,7 @@ import threading
 import time
 from typing import Any, Literal
 from client.utils import get_logger
-from client.logic import ConfigParameters, SESSION
+from logic import ConfigParameters, SESSION
 from .utils import MockArduinoController
 
 
