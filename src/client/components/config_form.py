@@ -13,7 +13,7 @@ def callback_generator(chamber: str, reader: list[Field]) -> Callable:
         form_values = {
             field.name: st.session_state[f"{chamber}-{field.name}"] for field in reader
         }
-        with config.lock:
+        with config:
             config.setter(**form_values)
             config.save()
         logger.info(
@@ -29,7 +29,7 @@ def callback_generator(chamber: str, reader: list[Field]) -> Callable:
 def config_form(chamber: str):
     with st.form(f"{chamber}-settings"):
         current_config = get_shared()[chamber]
-        with current_config.lock:
+        with current_config:
             reader = current_config.reader()
         n = (len(reader) + 1) // 2
         cols = st.columns([1, 1])

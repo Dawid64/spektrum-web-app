@@ -19,11 +19,11 @@ class ChamberConfig:
     def __init__(
         self,
         name: str,
-        water_interval: int,
-        water_quantity: int,
-        camera_frequency: int,
-        light_time: int,
-        sensor_delay: int,
+        water_interval: int = 10,
+        water_quantity: int = 10,
+        camera_frequency: int = 10,
+        light_time: int = 10,
+        sensor_delay: int = 10,
     ):
         self.lock = threading.RLock()
         self.name = name
@@ -37,9 +37,9 @@ class ChamberConfig:
         return [
             Field("water_interval", "Water interval", self.water_interval),
             Field("water_quantity", "Water quantity", self.water_quantity),
-            Field("camera_frequency", "camera_frequency", self.camera_frequency),
-            Field("light_time", "light_time", self.light_time),
-            Field("sensor_delay", "sensor_delay", self.sensor_delay),
+            Field("camera_frequency", "Camera frequency", self.camera_frequency),
+            Field("light_time", "Light time", self.light_time),
+            Field("sensor_delay", "Sensor delay", self.sensor_delay),
         ]
 
     def setter(
@@ -73,15 +73,8 @@ class ChamberConfig:
             )
         logger.debug(repr(config))
         if config is None:
-            config = ConfigParameters(
-                chamber_name=name,
-                date=datetime.now(timezone.utc),
-                watering_interval=100,
-                watering_quantity=100,
-                camera_frequency=10,
-                light_time=10,
-                sensor_delay=10,
-            )
+            chamber_config = ChamberConfig(name)
+            config = chamber_config.to_config_params()
             logger.debug("Config not found, submitting a new one")
             with SESSION() as session:
                 session.add(config)
@@ -91,15 +84,7 @@ class ChamberConfig:
 
     def save(self):
         logger = get_logger(f"Config-{self.name}")
-        config = ConfigParameters(
-            chamber_name=self.name,
-            date=datetime.now(timezone.utc),
-            watering_interval=self.water_interval,
-            watering_quantity=self.water_quantity,
-            camera_frequency=self.camera_frequency,
-            light_time=self.light_time,
-            sensor_delay=self.sensor_delay,
-        )
+        config = self.to_config_params()
         logger.debug(f"Saving configs\n{repr(config)}")
         with SESSION() as session:
             session.add(config)
@@ -115,6 +100,24 @@ class ChamberConfig:
             light_time=parameters.light_time,
             sensor_delay=parameters.sensor_delay,
         )
+
+    def to_config_params(self) -> ConfigParameters:
+        return ConfigParameters(
+            chamber_name=self.name,
+            date=datetime.now(timezone.utc),
+            watering_interval=self.water_interval,
+            watering_quantity=self.water_quantity,
+            camera_frequency=self.camera_frequency,
+            light_time=self.light_time,
+            sensor_delay=self.sensor_delay,
+        )
+
+    def __enter__(self):
+        self.lock.acquire()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.lock.release()
 
 
 class Chamber:
@@ -142,7 +145,7 @@ class Chamber:
         self.arduino.command("light")
 
     def water_plants(self):
-        with self.config.lock:
+        with self.config:
             water_quantity = self.config.water_quantity
             self.watering_next_run += timedelta(seconds=self.config.water_interval)
         watering_time: float = round(water_quantity / 30.55, 2)
