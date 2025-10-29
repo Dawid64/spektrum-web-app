@@ -7,7 +7,7 @@ import streamlit as st
 
 st.session_state["logout"] = None
 
-with open(os.path.join(".secrets", "config.yaml")) as file:
+with open(os.path.join("..", ".secrets", "config.yaml")) as file:
     _config = yaml.load(file, Loader=yaml.SafeLoader)
 
 RANKS = Literal["admin", "maintainer", "user"]

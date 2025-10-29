@@ -1,7 +1,7 @@
 from __future__ import annotations
 import threading
 import streamlit as st
-from client.logic.chamber import ChamberManager, Chamber, ChamberConfig
+from logic.chamber import ChamberManager, Chamber, ChamberConfig
 
 CHAMBER_NAMES = ["Chamber-1", "Chamber-2"]
 
