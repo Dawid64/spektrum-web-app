@@ -25,5 +25,5 @@ def get_shared() -> dict[str, ChamberConfig]:
         )
         thread.start()
 
-        get_shared._started = True
+        get_shared._started = True  # type: ignore
     return configs

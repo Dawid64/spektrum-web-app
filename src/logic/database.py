@@ -1,5 +1,6 @@
 from datetime import datetime
 import sqlalchemy as sa
+from pathlib import Path
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -10,7 +11,8 @@ from sqlalchemy.orm import (
 
 Base: DeclarativeMeta = declarative_base()
 
-DB = sa.create_engine("sqlite:///test.db")
+database_file = Path("data", "database.db")
+DB = sa.create_engine(f"sqlite:///{database_file}")
 SESSION = sessionmaker(DB)
 
 
