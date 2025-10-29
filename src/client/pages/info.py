@@ -1,7 +1,7 @@
 import streamlit as st
 import toml
 
-with open("pyproject.toml", "r", encoding="utf-8") as f:
+with open("../pyproject.toml", "r", encoding="utf-8") as f:
     information = toml.load(f)["project"]
 authors = [author["name"] for author in information["authors"]]
 

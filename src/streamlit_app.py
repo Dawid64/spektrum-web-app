@@ -1,17 +1,20 @@
 import logging
 import os
-
+from pathlib import Path
 import streamlit as st
 
-from client.logic.shared import get_shared
+from logic.shared import get_shared
 
 logging.basicConfig(level=logging.DEBUG)
 
+static = Path("client", "static")
+pages = Path("client", "pages")
+
 get_shared()  # Required to initialize chamber object
 
-st.logo(os.path.join("client", "static", "SpektrumLogoLight.svg"))
+st.logo(static / "SpektrumLogoLight.svg")
 
-with open(os.path.join("client", "static", "style.css")) as f:
+with open(static / "style.css") as f:
     st.markdown(f"<style id='vapor-css'>{f.read()}</style>", unsafe_allow_html=True)
 
 pages = [
@@ -25,9 +28,9 @@ pages = [
         title="Chamber settings",
         icon="⚙️",
     ),
-    st.Page(os.path.join("client", "pages", "labelling.py"), title="Labelling"),
-    st.Page(os.path.join("client", "pages", "admin_panel.py"), title="Admin panel"),
-    st.Page(os.path.join("client", "pages", "info.py"), title="Info"),
+    st.Page(pages / "labelling.py", title="Labelling"),
+    st.Page(pages / "admin_panel.py", title="Admin panel"),
+    st.Page(pages / "info.py", title="Info"),
 ]
 
 pg = st.navigation(pages, position="top")
