@@ -1,6 +1,6 @@
 import threading
 import streamlit as st
-from .chamber import ChamberManager, ChamberConfig
+from logic.chamber import ChamberManager, ChamberConfig
 
 CHAMBER_NAMES = ["Chamber-1", "Chamber-2"]
 
