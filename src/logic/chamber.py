@@ -4,7 +4,8 @@ import threading
 import time
 from typing import Any
 from client.utils import get_logger
-from logic import ConfigParameters, SESSION
+from logic import ChamberParameters, SESSION
+from logic.database import Measurements
 from .arduino import MockArduinoController
 
 
@@ -42,7 +43,7 @@ class ChamberConfig:
             Field("sensor_delay", "Sensor delay", self.sensor_delay),
         ]
 
-    def setter(
+    def set(
         self,
         water_interval: int | None = None,
         water_quantity: int | None = None,
@@ -65,10 +66,10 @@ class ChamberConfig:
     def load(cls, name: str) -> "ChamberConfig":
         logger = get_logger(f"Config-{name}")
         with SESSION() as session:
-            config: ConfigParameters | None = (
-                session.query(ConfigParameters)
-                .where(ConfigParameters.chamber_name == name)
-                .order_by(ConfigParameters.date.desc())
+            config: ChamberParameters | None = (
+                session.query(ChamberParameters)
+                .where(ChamberParameters.chamber_name == name)
+                .order_by(ChamberParameters.date.desc())
                 .first()
             )
         logger.debug(repr(config))
@@ -91,7 +92,7 @@ class ChamberConfig:
             session.commit()
 
     @classmethod
-    def from_config_params(cls, parameters: ConfigParameters) -> "ChamberConfig":
+    def from_config_params(cls, parameters: ChamberParameters) -> "ChamberConfig":
         return cls(
             name=parameters.chamber_name,
             water_interval=parameters.watering_interval,
@@ -101,8 +102,8 @@ class ChamberConfig:
             sensor_delay=parameters.sensor_delay,
         )
 
-    def to_config_params(self) -> ConfigParameters:
-        return ConfigParameters(
+    def to_config_params(self) -> ChamberParameters:
+        return ChamberParameters(
             chamber_name=self.name,
             date=datetime.now(timezone.utc),
             watering_interval=self.water_interval,
@@ -124,17 +125,24 @@ class Chamber:
     def __init__(self, config: ChamberConfig):
         self.config: ChamberConfig = config
         self.logger = get_logger(self.config.name)
-        self.arduino = MockArduinoController("COM9", 9600, timeout=3.0)
+        self.arduino = MockArduinoController("COM9")
+
         self.watering_next_run = datetime.now(timezone.utc)
+        self.light_next_run = datetime.now(timezone.utc)
+        self.get_params_next_run = datetime.now(timezone.utc)
 
-    def get_data(self):
-        pass
-
-    def read_from_sensors(self, table) -> str:
-        response = self.arduino.command("read")
-        if not isinstance(response, str):
-            raise ValueError
-        return response
+    def read_from_sensors(
+        self, add_to_database: bool = False
+    ) -> tuple[float, float, float]:
+        temperature, humidity, light_intensity = self.arduino.measurement()
+        if add_to_database:
+            measurement = Measurements(
+                datetime.now(timezone.utc),
+                temperature,
+                humidity,
+                light_intensity,
+            )
+        return temperature, humidity, light_intensity
 
     def take_photo(self):
         self.logger.info("Taking photo")
@@ -154,12 +162,15 @@ class Chamber:
 
 
 class ChamberManager:
-    def __init__(self, chambers: dict[str, Chamber]):
-        self.chambers = chambers
+    def __init__(self, configs: dict[str, ChamberConfig]):
+        self.chambers = {name: Chamber(config) for name, config in configs.items()}
 
     def scheduler_loop(self):
         while True:
             for chamber in self.chambers.values():
-                if datetime.now(timezone.utc) >= chamber.watering_next_run:
+                current_time = datetime.now(timezone.utc)
+                if current_time >= chamber.watering_next_run:
                     chamber.water_plants()
+                if current_time >= chamber.light_next_run:
+                    chamber.light_switch()
             time.sleep(0.5)

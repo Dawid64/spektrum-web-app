@@ -16,8 +16,8 @@ DB = sa.create_engine(f"sqlite:///{database_file}")
 SESSION = sessionmaker(DB)
 
 
-class ConfigParameters(Base):
-    __tablename__ = "config_parameters"
+class ChamberParameters(Base):
+    __tablename__ = "chamber_parameters"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True, unique=True)
     chamber_name: Mapped[str] = mapped_column(index=True)
@@ -31,6 +31,14 @@ class ConfigParameters(Base):
 
     def __repr__(self) -> str:
         return f"<{self.date} | {self.chamber_name} | water: (interval={self.watering_interval}, quantity={self.watering_quantity}), camera frequency={self.camera_frequency}, light time={self.light_time}, sensor delay={self.sensor_delay}>"
+
+
+class ChamberSettings(Base):
+    __tablename__ = "chamber_settings"
+    id: Mapped[int] = mapped_column(primary_key=True, index=True, unique=True)
+    chamber_name: Mapped[str] = mapped_column(index=True)
+
+    arduino_port: Mapped[str]
 
 
 class Measurements(Base):

@@ -14,7 +14,7 @@ def callback_generator(chamber: str, reader: list[Field]) -> Callable:
             field.name: st.session_state[f"{chamber}-{field.name}"] for field in reader
         }
         with config:
-            config.setter(**form_values)
+            config.set(**form_values)
             config.save()
         logger.info(
             "Parameters has been changed to:\n\t"
@@ -39,7 +39,7 @@ def config_form(chamber: str):
                     field.fullname,
                     value=field.value,
                     placeholder="Type a number...",
-                    key=f"{chamber}_{field.name}",
+                    key=f"{chamber}-{field.name}",
                 )
         with cols[1]:
             for field in reader[n:]:
@@ -47,7 +47,7 @@ def config_form(chamber: str):
                     field.fullname,
                     value=field.value,
                     placeholder="Type a number...",
-                    key=f"{chamber}_{field.name}",
+                    key=f"{chamber}-{field.name}",
                 )
         submitted = st.form_submit_button(
             "Save", on_click=callback_generator(chamber, reader)
