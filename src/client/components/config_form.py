@@ -18,7 +18,9 @@ def callback_generator(chamber: str, reader: list[Field]) -> Callable:
         with config:
             config.set(**form_values)
             config.save()
-            config.arduino = create_arduino_controller(f"{chamber}-port")
+            config.arduino = create_arduino_controller(
+                st.session_state[f"{chamber}-port"]
+            )
         logger.info(
             "Parameters has been changed to:\n\t"
             + "\n\t".join(
