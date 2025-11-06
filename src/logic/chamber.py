@@ -158,10 +158,11 @@ class Chamber:
                     seconds=self.config.sensor_delay
                 )
             measurement = Measurements(
-                datetime.now(timezone.utc),
-                temperature,
-                humidity,
-                light_intensity,
+                chamber_name=self.name,
+                date=datetime.now(timezone.utc),
+                temperature=temperature,
+                humidity=humidity,
+                light_intensity=light_intensity,
             )
             with SESSION() as session:
                 session.add(measurement)
