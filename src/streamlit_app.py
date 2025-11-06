@@ -20,7 +20,7 @@ pages = [
     st.Page(pages / "dashboard.py", title="Dashboard", icon="🌱"),
     st.Page(pages / "settings.py", title="Chamber settings", icon="⚙️"),
     st.Page(pages / "labelling.py", title="Labelling"),
-    st.Page(pages / "admin_panel.py", title="Admin panel"),
+    # st.Page(pages / "admin_panel.py", title="Admin panel"),
     st.Page(pages / "info.py", title="Info"),
 ]
 
