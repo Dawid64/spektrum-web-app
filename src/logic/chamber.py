@@ -207,5 +207,7 @@ class ChamberManager:
                     with chamber.config:
                         logger.debug(chamber.config.arduino.bump())
                     next_bump[chamber.name] += timedelta(seconds=20)
+                    time.sleep(0.5)
+                    logger.debug(f"Sensor results: {chamber.read_from_sensors()}")
 
             time.sleep(0.5)
