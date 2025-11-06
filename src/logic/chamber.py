@@ -145,7 +145,7 @@ class Chamber:
 
         self.watering_next_run = datetime.now(timezone.utc)
         self.light_next_run = datetime.now(timezone.utc)
-        self.get_params_next_run = datetime.now(timezone.utc)
+        self.read_sensors_next_run = datetime.now(timezone.utc)
 
     def read_from_sensors(
         self, add_to_database: bool = False
@@ -153,6 +153,10 @@ class Chamber:
         with self.config:
             temperature, humidity, light_intensity = self.config.arduino.measurement()
         if add_to_database:
+            with self.config:
+                self.read_sensors_next_run += timedelta(
+                    seconds=self.config.sensor_delay
+                )
             measurement = Measurements(
                 datetime.now(timezone.utc),
                 temperature,
@@ -198,16 +202,17 @@ class ChamberManager:
         while True:
             for chamber in self.chambers.values():
                 current_time = datetime.now(timezone.utc)
-                # if current_time >= chamber.watering_next_run:
-                #     chamber.water_plants()
-                # if current_time >= chamber.light_next_run:
-                #     chamber.light_switch()
+                if current_time >= chamber.watering_next_run:
+                    chamber.water_plants()
+                if current_time >= chamber.light_next_run:
+                    chamber.light_switch()
+                if current_time >= chamber.read_sensors_next_run:
+                    chamber.read_from_sensors(add_to_database=True)
                 if current_time >= next_bump[chamber.name]:
                     logger = get_logger(f"Bumper-{chamber.name}")
                     with chamber.config:
                         logger.debug(chamber.config.arduino.bump())
-                    next_bump[chamber.name] += timedelta(seconds=20)
-                    time.sleep(0.5)
-                    logger.debug(f"Sensor results: {chamber.read_from_sensors()}")
+                    next_bump[chamber.name] += timedelta()
+                    logger.debug(f"Sensor results: {chamber.read_from_sensors(True)}")
 
             time.sleep(0.5)
