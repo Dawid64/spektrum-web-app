@@ -33,7 +33,7 @@ def callback_generator(chamber: str, reader: list[Field]) -> Callable:
 
 def config_form(chamber: str):
     port_map: dict[str, ListPortInfo | None] = {"None": None} | {
-        port.name: port for port in comports()
+        port.device: port for port in comports()
     }
     port_list = list(port_map.keys())
     config = get_shared()[chamber]
