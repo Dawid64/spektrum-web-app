@@ -1,6 +1,7 @@
 import logging
 from typing import Literal
 import serial
+import streamlit as st
 from client.utils import get_logger
 
 ARDUINO_COMMAND = Literal[
@@ -93,4 +94,5 @@ def create_arduino_controller(port: str) -> BaseArduinoController:
         get_logger("Create arduino controller").error(
             f"Connecting to port: {port} has failed!"
         )
+        st.error(f"Setting port: {port} failed")
         return MockArduinoController("None")
