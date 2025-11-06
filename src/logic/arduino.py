@@ -1,3 +1,4 @@
+import logging
 from typing import Literal
 import serial
 from client.utils import get_logger
@@ -10,8 +11,19 @@ ARDUINO_COMMAND = Literal[
 ]
 
 
-class MockArduinoController:
+class BaseArduinoController:
+    port: str
+    logger: logging.Logger
+
+    def __init__(self, port: str, baudrate: int = 9600, timeout: float = 10): ...
+    def bump(self) -> bool: ...
+    def measurement(self) -> tuple[float, float, float]: ...
+    def command(self, command: bytes | ARDUINO_COMMAND) -> None | str: ...
+
+
+class MockArduinoController(BaseArduinoController):
     def __init__(self, port: str, baudrate: int = 9600, timeout: float = 10):
+        self.port = port
         self.logger = get_logger("Arduino-Mock")
         _ = (port, baudrate, timeout)
         self.logger.debug("Arduino mock initiated")
@@ -31,8 +43,9 @@ class MockArduinoController:
         return f"result of {command}"
 
 
-class ArduinoController:
+class ArduinoController(BaseArduinoController):
     def __init__(self, port: str, baudrate: int = 9600, timeout: float = 10):
+        self.port = port
         self.logger = get_logger("Arduino-Controller")
         self.ser = serial.Serial(port, baudrate, timeout=timeout)
         self.command_map: dict[str, bytes] = {
@@ -69,3 +82,15 @@ class ArduinoController:
             self.ser.reset_input_buffer()
             response: bytes = self.ser.readline()
             return response.decode().strip()
+
+
+def create_arduino_controller(port: str) -> BaseArduinoController:
+    if port == "None":
+        return MockArduinoController(port)
+    try:
+        return ArduinoController(port)
+    except Exception:
+        get_logger("Create arduino controller").error(
+            f"Connecting to port: {port} has failed!"
+        )
+        return MockArduinoController("None")

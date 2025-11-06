@@ -6,7 +6,7 @@ from typing import Any
 from client.utils import get_logger
 from logic import ChamberParameters, SESSION
 from logic.database import Measurements
-from .arduino import MockArduinoController
+from .arduino import BaseArduinoController, create_arduino_controller
 
 
 @dataclass
@@ -33,6 +33,8 @@ class ChamberConfig:
         self.camera_frequency = camera_frequency
         self.light_time = light_time
         self.sensor_delay = sensor_delay
+
+        self.arduino = create_arduino_controller("None")
 
     def reader(self) -> list[Field]:
         return [
@@ -113,6 +115,19 @@ class ChamberConfig:
             sensor_delay=self.sensor_delay,
         )
 
+    @property
+    def arduino(self):
+        return self._arduino
+
+    @arduino.setter
+    def arduino(self, arduino_controller: BaseArduinoController):
+        if "_arduino" in self.__dict__:
+            self._arduino.logger.warning("Detached!")
+        self._arduino = arduino_controller
+        self._arduino.logger.info(
+            f"Attached new arduino controller on: {arduino_controller.port}"
+        )
+
     def __enter__(self):
         self.lock.acquire()
         return self
@@ -125,7 +140,6 @@ class Chamber:
     def __init__(self, config: ChamberConfig):
         self.config: ChamberConfig = config
         self.logger = get_logger(self.config.name)
-        self.arduino = MockArduinoController("COM9")
 
         self.watering_next_run = datetime.now(timezone.utc)
         self.light_next_run = datetime.now(timezone.utc)
@@ -134,7 +148,8 @@ class Chamber:
     def read_from_sensors(
         self, add_to_database: bool = False
     ) -> tuple[float, float, float]:
-        temperature, humidity, light_intensity = self.arduino.measurement()
+        with self.config:
+            temperature, humidity, light_intensity = self.config.arduino.measurement()
         if add_to_database:
             measurement = Measurements(
                 datetime.now(timezone.utc),
@@ -142,15 +157,22 @@ class Chamber:
                 humidity,
                 light_intensity,
             )
+            with SESSION() as session:
+                session.add(measurement)
+                session.commit()
         return temperature, humidity, light_intensity
 
     def take_photo(self):
         self.logger.info("Taking photo")
-        self.arduino.command("camera")
+        with self.config:
+            self.config.arduino.command("camera")
 
     def light_switch(self):
-        self.logger.info(f"Changing light to {'on' if True else 'off'}")
-        self.arduino.command("light")
+        with self.config:
+            self.light_next_run += timedelta(seconds=self.config.light_time)
+        self.logger.info(f"Turning lights {'on' if True else 'off'}")
+        with self.config:
+            self.config.arduino.command("light")
 
     def water_plants(self):
         with self.config:
@@ -158,7 +180,8 @@ class Chamber:
             self.watering_next_run += timedelta(seconds=self.config.water_interval)
         watering_time: float = round(water_quantity / 30.55, 2)
         self.logger.info(f"Watering with quantity: {water_quantity} ml")
-        self.arduino.command(f"P {watering_time}".encode("utf-8"))
+        with self.config:
+            self.config.arduino.command(f"P {watering_time}".encode("utf-8"))
 
 
 class ChamberManager:
