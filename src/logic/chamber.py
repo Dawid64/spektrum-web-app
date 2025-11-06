@@ -139,6 +139,8 @@ class ChamberConfig:
 class Chamber:
     def __init__(self, config: ChamberConfig):
         self.config: ChamberConfig = config
+        with self.config:
+            self.name = self.config.name
         self.logger = get_logger(self.config.name)
 
         self.watering_next_run = datetime.now(timezone.utc)
@@ -189,11 +191,21 @@ class ChamberManager:
         self.chambers = {name: Chamber(config) for name, config in configs.items()}
 
     def scheduler_loop(self):
+        next_bump = {
+            chamber.name: datetime.now(timezone.utc)
+            for chamber in self.chambers.values()
+        }
         while True:
             for chamber in self.chambers.values():
                 current_time = datetime.now(timezone.utc)
-                if current_time >= chamber.watering_next_run:
-                    chamber.water_plants()
-                if current_time >= chamber.light_next_run:
-                    chamber.light_switch()
+                # if current_time >= chamber.watering_next_run:
+                #     chamber.water_plants()
+                # if current_time >= chamber.light_next_run:
+                #     chamber.light_switch()
+                if current_time >= next_bump[chamber.name]:
+                    logger = get_logger(f"Bumper-{chamber.name}")
+                    with chamber.config:
+                        logger.debug(chamber.config.arduino.bump())
+                    next_bump[chamber.name] += timedelta(seconds=20)
+
             time.sleep(0.5)
